@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2011 HawkinsSoftware
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Byron Hawkins of HawkinsSoftware
+ */
 package org.hawkinssoftware.azia.input.test;
 
 import java.awt.GridLayout;
@@ -10,8 +20,19 @@ import org.hawkinssoftware.azia.input.KeyboardInputEvent;
 import org.hawkinssoftware.azia.input.MouseInputEvent;
 import org.hawkinssoftware.azia.input.NativeInputSpool;
 
+/**
+ * DOC comment task awaits.
+ * 
+ * @author Byron Hawkins
+ */
 public class NativeInputTest
 {
+	
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	private static class SpoolSpy extends JFrame implements NativeInputSpool.Listener
 	{
 		private final JPanel contentPanel = new JPanel();

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2011 HawkinsSoftware
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Byron Hawkins of HawkinsSoftware
+ */
 package org.hawkinssoftware.azia.input;
 
 import java.util.ArrayList;
@@ -13,8 +23,19 @@ import org.hawkinssoftware.azia.input.key.HardwareKey;
 import org.hawkinssoftware.azia.input.key.HardwareKeyIndex;
 import org.hawkinssoftware.rns.core.log.Log;
 
+/**
+ * DOC comment task awaits.
+ * 
+ * @author Byron Hawkins
+ */
 public class NativeInputSpool
 {
+	
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	private class NativeEventReceiver implements NativeInput.Listener
 	{
 		private long lastMouseMove = 0L;
@@ -169,6 +190,11 @@ public class NativeInputSpool
 		}
 	}
 
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	public interface Listener
 	{
 		void mouseStateChanged(MouseInputEvent event);
@@ -176,8 +202,19 @@ public class NativeInputSpool
 		void keyboardStateChanged(KeyboardInputEvent event);
 	}
 
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	private static class MouseState
 	{
+		
+		/**
+		 * DOC comment task awaits.
+		 * 
+		 * @author Byron Hawkins
+		 */
 		private enum ButtonPosition
 		{
 			UP,
@@ -196,6 +233,11 @@ public class NativeInputSpool
 		private int y;
 	}
 
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	private class Spool extends Thread
 	{
 		public Spool()

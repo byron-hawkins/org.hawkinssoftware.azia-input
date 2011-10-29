@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2011 HawkinsSoftware
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Byron Hawkins of HawkinsSoftware
+ */
 package org.hawkinssoftware.azia.input.clipboard;
 
 import java.awt.Toolkit;
@@ -14,8 +24,19 @@ import org.hawkinssoftware.rns.core.role.CoreDomains.InitializationDomain;
 import org.hawkinssoftware.rns.core.validation.ValidateRead;
 import org.hawkinssoftware.rns.core.validation.ValidateWrite;
 
+/**
+ * DOC comment task awaits.
+ * 
+ * @author Byron Hawkins
+ */
 public class ClipboardMonitor
 {
+	
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	public interface Listener
 	{
 		void newClipboardContent(ClipboardContents contents);
@@ -71,6 +92,11 @@ public class ClipboardMonitor
 		poll.systemClipboard.setContents(contents.contents, null);
 	}
 
+	/**
+	 * DOC comment task awaits.
+	 * 
+	 * @author Byron Hawkins
+	 */
 	@ValidateRead(validatorType = ClipboardMonitor.class, method = "holdsLock")
 	@ValidateWrite(validatorType = ClipboardMonitor.class, method = "holdsLock")
 	public class Poll extends Thread implements ClipboardOwner
