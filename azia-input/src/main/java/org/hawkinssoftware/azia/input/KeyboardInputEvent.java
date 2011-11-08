@@ -13,6 +13,7 @@ package org.hawkinssoftware.azia.input;
 import java.util.Set;
 
 import org.hawkinssoftware.azia.input.key.HardwareKey;
+import org.hawkinssoftware.azia.input.key.LogicalKey;
 
 /**
  * DOC comment task awaits.
@@ -21,7 +22,7 @@ import org.hawkinssoftware.azia.input.key.HardwareKey;
  */
 public class KeyboardInputEvent extends NativeInputEvent<KeyboardInputEvent>
 {
-	
+
 	/**
 	 * DOC comment task awaits.
 	 * 
@@ -36,13 +37,15 @@ public class KeyboardInputEvent extends NativeInputEvent<KeyboardInputEvent>
 
 	public final HardwareKey key;
 	public final State state;
-	public final Set<HardwareKey> pressedKeys;
+	public final Set<HardwareKey> pressedHardwareKeys;
+	public final Set<LogicalKey> pressedLogicalKeys;
 
 	KeyboardInputEvent(HardwareKey key, State state, Set<HardwareKey> pressedKeys)
 	{
 		this.key = key;
 		this.state = state;
-		this.pressedKeys = pressedKeys;
+		this.pressedHardwareKeys = pressedKeys;
+		pressedLogicalKeys = HardwareKey.getLogicalEquivalent(pressedHardwareKeys);
 	}
 
 	private KeyboardInputEvent(long timestamp, HardwareKey key, State state, Set<HardwareKey> pressedKeys)
@@ -51,18 +54,18 @@ public class KeyboardInputEvent extends NativeInputEvent<KeyboardInputEvent>
 
 		this.key = key;
 		this.state = state;
-		this.pressedKeys = pressedKeys;
+		this.pressedHardwareKeys = pressedKeys;
+		pressedLogicalKeys = HardwareKey.getLogicalEquivalent(pressedHardwareKeys);
 	}
 
 	public boolean hasModifiers()
 	{
-		return (pressedKeys.contains(HardwareKey.RCONTROL) || pressedKeys.contains(HardwareKey.LCONTROL) || pressedKeys.contains(HardwareKey.RWIN)
-				|| pressedKeys.contains(HardwareKey.LWIN) || pressedKeys.contains(HardwareKey.RMENU) || pressedKeys.contains(HardwareKey.LMENU));
+		return (pressedLogicalKeys.contains(LogicalKey.CONTROL) || pressedLogicalKeys.contains(LogicalKey.WIN) || pressedLogicalKeys.contains(LogicalKey.MENU));
 	}
 
 	public boolean isShifted()
 	{
-		return pressedKeys.contains(HardwareKey.SHIFT) || pressedKeys.contains(HardwareKey.LSHIFT) || pressedKeys.contains(HardwareKey.RSHIFT);
+		return pressedLogicalKeys.contains(LogicalKey.SHIFT);
 	}
 
 	public boolean isCharacter()
@@ -72,11 +75,7 @@ public class KeyboardInputEvent extends NativeInputEvent<KeyboardInputEvent>
 			return false;
 		}
 
-		if ((key.ordinal() >= HardwareKey.KEYBOARD0.ordinal()) && (key.ordinal() <= HardwareKey.Z.ordinal()))
-		{
-			return true;
-		}
-		if ((key.ordinal() >= HardwareKey.NUMPAD0.ordinal()) && (key.ordinal() <= HardwareKey.NUMPAD9.ordinal()))
+		if ((key.logicalKey.ordinal() >= LogicalKey.NUMBER0.ordinal()) && (key.logicalKey.ordinal() <= LogicalKey.Z.ordinal()))
 		{
 			return true;
 		}
@@ -110,49 +109,48 @@ public class KeyboardInputEvent extends NativeInputEvent<KeyboardInputEvent>
 
 	public char getCharacter()
 	{
-		if (pressedKeys.contains(HardwareKey.RCONTROL) || pressedKeys.contains(HardwareKey.LCONTROL) || pressedKeys.contains(HardwareKey.RWIN)
-				|| pressedKeys.contains(HardwareKey.LWIN) || pressedKeys.contains(HardwareKey.RMENU) || pressedKeys.contains(HardwareKey.LMENU))
+		if (hasModifiers())
 		{
 			return ' ';
 		}
 
-		if ((key.ordinal() >= HardwareKey.KEYBOARD0.ordinal()) && (key.ordinal() <= HardwareKey.KEYBOARD9.ordinal()))
+		if ((key.logicalKey.ordinal() >= LogicalKey.NUMBER0.ordinal()) && (key.logicalKey.ordinal() <= LogicalKey.NUMBER9.ordinal()))
 		{
 			if (isShifted())
 			{
-				switch (key)
+				switch (key.logicalKey)
 				{
-					case KEYBOARD0:
+					case NUMBER0:
 						return ')';
-					case KEYBOARD1:
+					case NUMBER1:
 						return '!';
-					case KEYBOARD2:
+					case NUMBER2:
 						return '@';
-					case KEYBOARD3:
+					case NUMBER3:
 						return '#';
-					case KEYBOARD4:
+					case NUMBER4:
 						return '$';
-					case KEYBOARD5:
+					case NUMBER5:
 						return '%';
-					case KEYBOARD6:
+					case NUMBER6:
 						return '^';
-					case KEYBOARD7:
+					case NUMBER7:
 						return '&';
-					case KEYBOARD8:
+					case NUMBER8:
 						return '*';
-					case KEYBOARD9:
+					case NUMBER9:
 						return '(';
 				}
 			}
 			else
 			{
-				return (char) ('0' + (key.ordinal() - HardwareKey.KEYBOARD0.ordinal()));
+				return (char) ('0' + (key.logicalKey.ordinal() - LogicalKey.NUMBER0.ordinal()));
 			}
 		}
 
-		if ((key.ordinal() >= HardwareKey.NUMPAD0.ordinal()) && (key.ordinal() <= HardwareKey.NUMPAD9.ordinal()))
+		if ((key.logicalKey.ordinal() >= LogicalKey.NUMBER0.ordinal()) && (key.logicalKey.ordinal() <= LogicalKey.NUMBER9.ordinal()))
 		{
-			return (char) ('0' + (key.ordinal() - HardwareKey.NUMPAD0.ordinal()));
+			return (char) ('0' + (key.ordinal() - LogicalKey.NUMBER0.ordinal()));
 		}
 
 		if ((key.ordinal() >= HardwareKey.A.ordinal()) && (key.ordinal() <= HardwareKey.Z.ordinal()))
@@ -260,12 +258,12 @@ public class KeyboardInputEvent extends NativeInputEvent<KeyboardInputEvent>
 	@Override
 	public KeyboardInputEvent copy()
 	{
-		return new KeyboardInputEvent(timestamp, key, state, pressedKeys);
+		return new KeyboardInputEvent(timestamp, key, state, pressedHardwareKeys);
 	}
 
 	@Override
 	public String describe()
 	{
-		return "(" + key + " " + state + " " + pressedKeys + ")";
+		return "(" + key + " " + state + " " + pressedHardwareKeys + ")";
 	}
 }

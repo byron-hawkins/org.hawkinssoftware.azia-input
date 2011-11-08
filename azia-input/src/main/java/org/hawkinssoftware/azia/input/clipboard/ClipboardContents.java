@@ -26,7 +26,6 @@ import java.util.List;
  */
 public class ClipboardContents
 {
-	
 	/**
 	 * DOC comment task awaits.
 	 * 
@@ -36,7 +35,12 @@ public class ClipboardContents
 	{
 		ClipboardContents getClipboardContents();
 	}
-	
+
+	public static Provider createPlainTextProvider(String plainText)
+	{
+		return new PlainTextTransferable(plainText);
+	}
+
 	public final String text;
 	public final Image image;
 	public final List<File> files;
@@ -54,6 +58,16 @@ public class ClipboardContents
 		image = extractData(DataFlavor.imageFlavor, "image", Image.class, null);
 		files = extractData(DataFlavor.javaFileListFlavor, "file", List.class, Collections.emptyList());
 		text = extractData(DataFlavor.stringFlavor, "text", String.class, "");
+	}
+
+	private ClipboardContents(Transferable data, String plainText)
+	{
+		text = plainText;
+		image = null;
+		files = Collections.emptyList();
+
+		contents = data;
+		flavors = contents.getTransferDataFlavors();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -109,7 +123,10 @@ public class ClipboardContents
 
 		if (hasImage())
 		{
-			return ClipboardImageComparator.getInstance().compare(image, other.image);
+			if (!ClipboardImageComparator.getInstance().compare(image, other.image))
+			{
+				return false;
+			}
 		}
 
 		if (hasFiles())
@@ -126,13 +143,20 @@ public class ClipboardContents
 					return false;
 				}
 			}
-			
-			return true;
+		}
+		else if (!text.equals(other.text))
+		{
+			return false;
+		}
+		
+		if (flavors.length != other.flavors.length)
+		{
+			return false;
 		}
 
-		return text.equals(other.text);
+		return true;
 	}
-	
+
 	public String getSummary()
 	{
 		if (image != null)
@@ -154,4 +178,43 @@ public class ClipboardContents
 		return getSummary();
 	}
 
+	private static class PlainTextTransferable implements Transferable, Provider
+	{
+		private static final DataFlavor[] DATA_FLAVORS = new DataFlavor[] { DataFlavor.stringFlavor };
+
+		private final ClipboardContents data;
+
+		public PlainTextTransferable(String plainText)
+		{
+			data = new ClipboardContents(this, plainText);
+		}
+
+		@Override
+		public ClipboardContents getClipboardContents()
+		{
+			return data;
+		}
+
+		@Override
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException
+		{
+			if (flavor.isFlavorTextType())
+			{
+				return data.text;
+			}
+			throw new UnsupportedFlavorException(flavor);
+		}
+
+		@Override
+		public DataFlavor[] getTransferDataFlavors()
+		{
+			return DATA_FLAVORS;
+		}
+
+		@Override
+		public boolean isDataFlavorSupported(DataFlavor flavor)
+		{
+			return flavor.isFlavorTextType();
+		}
+	}
 }

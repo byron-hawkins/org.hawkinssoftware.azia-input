@@ -10,7 +10,13 @@
  */
 package org.hawkinssoftware.azia.input;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.hawkinssoftware.azia.core.log.AziaLogging.Tag;
+import org.hawkinssoftware.azia.input.key.HardwareKey;
+import org.hawkinssoftware.azia.input.key.LogicalKey;
 import org.hawkinssoftware.rns.core.log.Log;
 
 /**
@@ -20,7 +26,6 @@ import org.hawkinssoftware.rns.core.log.Log;
  */
 public class NativeInput
 {
-	
 	/**
 	 * DOC comment task awaits.
 	 * 
@@ -110,6 +115,22 @@ public class NativeInput
 		}
 	}
 
+	public void setMetaKeys(Set<LogicalKey> metaKeys)
+	{
+		int index = 0;
+		for (LogicalKey key : metaKeys)
+		{
+			List<HardwareKey> synonymList = new ArrayList<HardwareKey>(key.getHardwareKeys());
+
+			int keyCode1 = (synonymList.size() > 0) ? synonymList.get(0).keyCode : 0x0;
+			int keyCode2 = (synonymList.size() > 1) ? synonymList.get(1).keyCode : 0x0;
+			int keyCode3 = (synonymList.size() > 2) ? synonymList.get(2).keyCode : 0x0;
+
+			defineMetaKey(index, keyCode1, keyCode2, keyCode3);
+			index++;
+		}
+	}
+
 	private void startListenerThread()
 	{
 		synchronized (NativeInput.class)
@@ -147,10 +168,14 @@ public class NativeInput
 		}
 	}
 
-	// devours the thread until stopNativeEventHook is called
+	// beware: devours the thread until stopNativeEventHook is called
 	private native void startNativeEventHook();
 
 	private native void stopNativeEventHook();
+
+	private native void defineMetaKey(int index, int keyCode1, int keyCode2, int keyCode3);
+
+	private native void clearMetaKeys();
 
 	// called from JNI
 	public void mouseButtonEvent(int windowsEventId)

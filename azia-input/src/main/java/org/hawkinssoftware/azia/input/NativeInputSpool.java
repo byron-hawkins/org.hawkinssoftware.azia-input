@@ -30,7 +30,6 @@ import org.hawkinssoftware.rns.core.log.Log;
  */
 public class NativeInputSpool
 {
-	
 	/**
 	 * DOC comment task awaits.
 	 * 
