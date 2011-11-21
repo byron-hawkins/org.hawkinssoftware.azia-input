@@ -41,10 +41,18 @@ public class ClipboardContents
 		return new PlainTextTransferable(plainText);
 	}
 
+	public enum Type
+	{
+		TEXT,
+		IMAGE,
+		FILES;
+	}
+
 	public final String text;
 	public final Image image;
 	public final List<File> files;
 
+	public final Type type;
 	public final DataFlavor[] flavors;
 
 	final Transferable contents;
@@ -58,6 +66,19 @@ public class ClipboardContents
 		image = extractData(DataFlavor.imageFlavor, "image", Image.class, null);
 		files = extractData(DataFlavor.javaFileListFlavor, "file", List.class, Collections.emptyList());
 		text = extractData(DataFlavor.stringFlavor, "text", String.class, "");
+
+		if (hasImage())
+		{
+			type = Type.IMAGE;
+		}
+		else if (hasFiles())
+		{
+			type = Type.FILES;
+		}
+		else
+		{
+			type = Type.TEXT;
+		}
 	}
 
 	private ClipboardContents(Transferable data, String plainText)
@@ -68,6 +89,19 @@ public class ClipboardContents
 
 		contents = data;
 		flavors = contents.getTransferDataFlavors();
+
+		if (hasImage())
+		{
+			type = Type.IMAGE;
+		}
+		else if (hasFiles())
+		{
+			type = Type.FILES;
+		}
+		else
+		{
+			type = Type.TEXT;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -148,7 +182,7 @@ public class ClipboardContents
 		{
 			return false;
 		}
-		
+
 		if (flavors.length != other.flavors.length)
 		{
 			return false;
