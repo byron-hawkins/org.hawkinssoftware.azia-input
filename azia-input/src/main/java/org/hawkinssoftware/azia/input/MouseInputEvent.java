@@ -22,7 +22,7 @@ import org.hawkinssoftware.azia.core.layout.ScreenPosition;
  */
 public class MouseInputEvent extends NativeInputEvent<MouseInputEvent> implements ScreenPosition
 {
-	
+
 	/**
 	 * DOC comment task awaits.
 	 * 
@@ -163,6 +163,11 @@ public class MouseInputEvent extends NativeInputEvent<MouseInputEvent> implement
 	public boolean isDoubleClick()
 	{
 		return changes.contains(Change.DOUBLE_CLICK);
+	}
+
+	public boolean isMove()
+	{
+		return (changes.size() == 1) && changes.contains(MouseInputEvent.Change.POSITION);
 	}
 
 	@Override

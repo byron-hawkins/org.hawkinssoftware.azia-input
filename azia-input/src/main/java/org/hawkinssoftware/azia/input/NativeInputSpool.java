@@ -208,7 +208,7 @@ public class NativeInputSpool
 	 */
 	private static class MouseState
 	{
-		
+
 		/**
 		 * DOC comment task awaits.
 		 * 
@@ -265,7 +265,7 @@ public class NativeInputSpool
 							}
 						}
 
-						event = eventBuffer.remove(0);
+						event = eventBuffer.getNext();
 					}
 
 					synchronized (listeners)
@@ -291,9 +291,44 @@ public class NativeInputSpool
 		}
 	}
 
+	private class InputEventQueue
+	{
+		MouseInputEvent lastMouseMove = null;
+		final List<NativeInputEvent<?>> queue = new LinkedList<NativeInputEvent<?>>();
+
+		void add(NativeInputEvent<?> event)
+		{
+			if (event instanceof MouseInputEvent)
+			{
+				MouseInputEvent mouseEvent = (MouseInputEvent) event;
+				if (mouseEvent.isMove())
+				{
+					lastMouseMove = mouseEvent;
+					return;
+				}
+			}
+
+			queue.add(event);
+		}
+
+		NativeInputEvent<?> getNext()
+		{
+			if (queue.isEmpty())
+			{
+				return lastMouseMove;
+			}
+			return queue.remove(0);
+		}
+
+		boolean isEmpty()
+		{
+			return queue.isEmpty() && (lastMouseMove == null);
+		}
+	}
+
 	private static final long DOUBLE_CLICK_THRESHOLD = 200L;
 
-	private final List<NativeInputEvent<?>> eventBuffer = new LinkedList<NativeInputEvent<?>>();
+	private final InputEventQueue eventBuffer = new InputEventQueue();
 
 	private final Spool spool = new Spool();
 	private final NativeEventReceiver receiver = new NativeEventReceiver();

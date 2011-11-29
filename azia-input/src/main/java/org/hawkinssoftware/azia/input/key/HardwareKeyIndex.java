@@ -306,9 +306,9 @@ public class HardwareKeyIndex
 			case VK_SPACE:
 				return HardwareKey.SPACE;
 			case VK_PRIOR:
-				return HardwareKey.PRIOR;
+				return HardwareKey.PAGE_UP;
 			case VK_NEXT:
-				return HardwareKey.NEXT;
+				return HardwareKey.PAGE_DOWN;
 			case VK_END:
 				return HardwareKey.END;
 			case VK_HOME:
