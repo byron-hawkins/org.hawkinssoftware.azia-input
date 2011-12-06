@@ -105,12 +105,12 @@ public class ClipboardContents
 	}
 
 	@SuppressWarnings("unchecked")
-	private <Type> Type extractData(DataFlavor specificFlavor, String mimeType, Class<Type> type, Type defaultValue)
+	private <DataType> DataType extractData(DataFlavor specificFlavor, String mimeType, Class<DataType> type, DataType defaultValue)
 			throws UnsupportedFlavorException, IOException
 	{
 		if (contents.isDataFlavorSupported(specificFlavor))
 		{
-			return (Type) contents.getTransferData(specificFlavor);
+			return (DataType) contents.getTransferData(specificFlavor);
 		}
 		else
 		{
@@ -118,7 +118,7 @@ public class ClipboardContents
 			{
 				if (flavor.getMimeType().startsWith(mimeType))
 				{
-					return (Type) contents.getTransferData(flavor);
+					return (DataType) contents.getTransferData(flavor);
 				}
 			}
 		}
