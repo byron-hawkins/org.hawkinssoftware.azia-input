@@ -315,7 +315,16 @@ public class NativeInputSpool
 		{
 			if (queue.isEmpty())
 			{
-				return lastMouseMove;
+				if (lastMouseMove == null)
+				{
+					return null;
+				}
+				else 
+				{
+					NativeInputEvent<?> mouseMove = lastMouseMove;
+					lastMouseMove = null;
+					return mouseMove;
+				}
 			}
 			return queue.remove(0);
 		}
